@@ -4,8 +4,8 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const userRoute = require("./routes/user.route");
-const taskRoute = require("./routes/task.route");
-const statRoute = require("./routes/taskcompleted.route");
+//const taskRoute = require("./routes/task.route");
+//const statRoute = require("./routes/taskcompleted.route");
 /* import Routes  */
 
 const app = express();

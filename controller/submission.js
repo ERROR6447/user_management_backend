@@ -176,7 +176,7 @@ const getSubmissionByStudentId = async (req, res) => {
     }
 
     const Submissions = await Submissions.find({
-      student: req.params.studentId,
+      student: val_result.user,
     })
       .populate("chapter")
       .populate("gradedBy");

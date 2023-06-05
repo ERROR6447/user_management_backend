@@ -18,7 +18,7 @@ router.put("/gradeSubmission/:submissionId", gradeSubmission);
 
 router.delete("/deleteSubmission/:submissionId", deleteSubmission);
 
-router.get("/getSubmission/:studentId", getSubmissionByStudentId);
+router.get("/getSubmission", getSubmissionByStudentId);
 
 router.get("/getAllSubmission", getAllSubmission);
 

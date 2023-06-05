@@ -22,13 +22,14 @@ const getToken = async (req, res) => {
   }
 
   const user = await User.findOne({ email });
-
+  console.log("After Finding Users:", user);
   if (!user) {
     res.status(401).json({ message: "user does not exists" });
     return;
   }
 
   if (!(await validatePassHash(password, user.password))) {
+    console.log("Invalid Password");
     res.status(401).json({ message: "invalid password" });
     return;
   }
@@ -41,7 +42,7 @@ const getToken = async (req, res) => {
   }
 
   if (user.Enable_2FactAuth) {
-    const verified = speakeasy.totp.verify({
+    const verified = await speakeasy.totp.verify({
       secret: user.twoFactSecret,
       encoding: "base32",
       token: code,
@@ -51,7 +52,7 @@ const getToken = async (req, res) => {
       return;
     }
   }
-
+  console.log("Reached Here sending response: ");
   const accessToken = jwt.sign(
     {
       id: user._id,
@@ -61,6 +62,7 @@ const getToken = async (req, res) => {
     { expiresIn: "1d" }
   );
 
+  console.log("Reponse sending : ", accessToken);
   res.json({ token: accessToken });
 };
 

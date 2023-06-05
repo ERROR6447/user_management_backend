@@ -7,7 +7,16 @@ const addCourse = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await await validateToken(req.headers.authorization);
+    console.log("Val_result: ", val_result);
+    if (!val_result.valid || val_result.role !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    console.log("Val_result: ", val_result);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -44,7 +53,7 @@ const updateCourse = async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -81,7 +90,7 @@ const updateCourse = async (req, res) => {
 
 const deleteCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -113,7 +122,7 @@ const AddStudentstoCourse = async (req, res) => {
   try {
     const { studentEmail, stack } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -163,7 +172,7 @@ const AddStudentstoCourse = async (req, res) => {
 
 const getAllCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -189,7 +198,7 @@ const getAllCourse = async (req, res) => {
 
 const getStudentCourse = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -199,7 +208,7 @@ const getStudentCourse = async (req, res) => {
     }
 
     const StudCourses = await Courses.find({
-      enrolled_students: req.params.studentId,
+      enrolled_students: val_result.user,
     })
       .populate({
         path: "createdBy",

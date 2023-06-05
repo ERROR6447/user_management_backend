@@ -19,6 +19,7 @@
     "nodemon": "^2.0.22",
     "password-validator": "^5.3.0",
     "qrcode": "^1.5.3",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "util": "^0.12.5"
   }
 }

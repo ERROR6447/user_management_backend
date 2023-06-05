@@ -1,5 +1,5 @@
 const { validateToken } = require("../utils/validatetoken");
-const { Submissions, Submissions } = require("../models/submission");
+const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 const { Chapters } = require("../models/chapters");
 
@@ -7,7 +7,7 @@ const AddSubmission = async (req, res) => {
   try {
     const { status } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -53,7 +53,7 @@ const updateSubmission = async (req, res) => {
   try {
     const { status } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -104,7 +104,7 @@ const gradeSubmission = async (req, res) => {
   try {
     const { grade, status } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -140,7 +140,7 @@ const gradeSubmission = async (req, res) => {
 
 const deleteSubmission = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -166,7 +166,7 @@ const deleteSubmission = async (req, res) => {
 
 const getSubmissionByStudentId = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({
@@ -196,7 +196,7 @@ const getSubmissionByStudentId = async (req, res) => {
 
 const getAllSubmission = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result !== "admin") {
       res.status(401).json({

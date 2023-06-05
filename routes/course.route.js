@@ -21,6 +21,6 @@ router.post("/enroll_student/:courseId", AddStudentstoCourse);
 
 router.get("/getAllCourses", getAllCourse);
 
-router.get("/getCourses/:studentId", getStudentCourse);
+router.get("/getCourses", getStudentCourse);
 
 module.exports = router;

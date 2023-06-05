@@ -7,7 +7,7 @@ const addChapters = async (req, res) => {
   try {
     const { title, description, practical, image } = req.body;
 
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -59,7 +59,7 @@ const addChapters = async (req, res) => {
 const updateChapter = async (req, res) => {
   try {
     const { title, description, practical, image } = req.body;
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -99,7 +99,7 @@ const updateChapter = async (req, res) => {
 
 const deleteChapter = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
@@ -125,7 +125,7 @@ const deleteChapter = async (req, res) => {
 
 const getChapterByCourseId = async (req, res) => {
   try {
-    const val_result = validateToken(req.headers.authorization);
+    const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid) {
       res.status(401).json({

@@ -9,7 +9,7 @@ const addCourse = async (req, res) => {
 
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid && val_result.role !== "admin") {
+    if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
@@ -46,7 +46,7 @@ const updateCourse = async (req, res) => {
 
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid && val_result.role !== "admin") {
+    if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
@@ -83,7 +83,7 @@ const deleteCourse = async (req, res) => {
   try {
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid && val_result.role !== "admin") {
+    if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
@@ -115,7 +115,7 @@ const AddStudentstoCourse = async (req, res) => {
 
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid && val_result.role !== "admin") {
+    if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
@@ -165,7 +165,7 @@ const getAllCourse = async (req, res) => {
   try {
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid) {
+    if (!val_result.valid) {
       res.status(401).json({
         message: "Need to Login to Access Course List ",
       });
@@ -191,7 +191,7 @@ const getStudentCourse = async (req, res) => {
   try {
     const val_result = validateToken(req.headers.authorization);
 
-    if (val_result.valid && val_result.role !== "student") {
+    if (!val_result.valid) {
       res.status(401).json({
         message: "Access Denied ",
       });

@@ -4,6 +4,10 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const userRoute = require("./routes/user.route");
+const chapterRoute = require("./routes/chapter.route");
+const courseRoute = require("./routes/course.route");
+const submissionRoute = require("./routes/submission.route");
+
 //const taskRoute = require("./routes/task.route");
 //const statRoute = require("./routes/taskcompleted.route");
 /* import Routes  */
@@ -26,6 +30,9 @@ app.use((req, res, next) => {
 /* add routes here app.use('',routes) */
 
 app.use("/", userRoute);
+app.use("/", chapterRoute);
+app.use("/", courseRoute);
+app.use("/", submissionRoute);
 
 // var route,
 //   routes = [];

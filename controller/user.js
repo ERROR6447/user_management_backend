@@ -9,6 +9,7 @@ const {
   validatePassword,
   validatePassHash,
 } = require("../utils/passwords");
+const { SendMail } = require("../utils/email");
 const speakeasy = require("speakeasy");
 const qrcode = require("qrcode");
 
@@ -92,7 +93,7 @@ const signup = async (req, res) => {
 
   const verificationToken = await crypto.randomBytes(32).toString("hex");
   const passHash = await getPasswordHash(password);
-  const verificationLink = `${process.env.base_url}:${process.env.PORT}/auth/verify-email/${verificationToken}`;
+  const verificationLink = `${process.env.base_url}:${process.env.PORT}/verify-email/${verificationToken}`;
 
   const htmlmsg = `<p>Dear User,
   </p>
@@ -106,6 +107,12 @@ const signup = async (req, res) => {
   //return;
   //}
 
+  const sendEmail = await SendMail(email, "Verify your Email Address", htmlmsg);
+  console.log("Send Email:", sendEmail);
+  if (sendEmail !== 200) {
+    res.status(500).json({ error: "Error while Sending Email" });
+    return;
+  }
   const user = await User.create({
     //userId: new ObjectId().toString(),
     username: username,

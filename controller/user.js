@@ -196,7 +196,10 @@ const verifyEmail = async (req, res) => {
         expires: new Date(Date.now() + 900000),
       });
     }
-
+    res.cookie("token", accessToken, {
+      httpOnly: false,
+      expires: new Date(Date.now() + 900000),
+    });
     console.log("Email Verified");
     res.redirect(
       `${process.env.FRONT_PORT}/email-verified?token=${accessToken}`

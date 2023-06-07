@@ -9,6 +9,8 @@ const {
   getStudentCourse,
   AddStudentstoCourses,
   removeEnrollment,
+  getCourseById,
+  getCourseProgress,
 } = require("../controller/courses");
 
 const router = express.Router();
@@ -28,5 +30,9 @@ router.put("/removeEnrollment", removeEnrollment);
 router.get("/getAllCourses", getAllCourse);
 
 router.get("/getCourses", getStudentCourse);
+
+router.get("/getCourseById/:courseId", getCourseById);
+
+router.get("/getCourseProgress/:courseId", getCourseProgress);
 
 module.exports = router;

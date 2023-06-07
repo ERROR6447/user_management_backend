@@ -1,4 +1,6 @@
+const { Chapters } = require("../models/chapters");
 const { Courses } = require("../models/courses");
+const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 
 const { validateToken } = require("../utils/validatetoken");
@@ -356,6 +358,78 @@ const getStudentCourse = async (req, res) => {
   }
 };
 
+const getCourseById = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid) {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({ _id: req.params.courseId })
+      .populate("enrolled_students")
+      .populate("createdBy");
+    if (!course) {
+      res.status(500).json({ message: "Error While Fetching  Course" });
+      return;
+    }
+    res.status(200).json({ message: "Course", course: course });
+  } catch (err) {
+    console.log("Error While Fetching COurse By Id : ", err);
+    res.status(500).json({ message: "Error While Fetching Course By Id" });
+  }
+};
+
+const getCourseProgress = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    if (!val_result.valid) {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const course = await Courses.findOne({
+      _id: req.params.courseId,
+      enrolled_students: val_result.user,
+    })
+      .populate("enrolled_students")
+      .populate("createdBy");
+    if (!course) {
+      res.status(500).json({ message: "Error While Fetching  Course" });
+      return;
+    }
+
+    const chapters = await Chapters.find({ course: req.params.courseId });
+
+    if (!chapters) {
+      res.status(500).json({ message: "Error While Fetching  Chapters" });
+      return;
+    }
+
+    const chapterIds = chapters.map((chap) => chap._id);
+    const grades = await Submissions.find({
+      student: val_result.user,
+      chapter: { $in: chapterIds },
+    }).populate("chapter");
+
+    res.status(200).json({
+      message: "Course",
+      course: course,
+      chapters: chapters,
+      submission: grades,
+    });
+  } catch (err) {
+    console.log("Error While Fetching COurse By Id : ", err);
+    res.status(500).json({ message: "Error While Fetching Course By Id" });
+  }
+};
+
 module.exports = {
   addCourse,
   updateCourse,
@@ -365,4 +439,6 @@ module.exports = {
   getStudentCourse,
   AddStudentstoCourses,
   removeEnrollment,
+  getCourseById,
+  getCourseProgress,
 };

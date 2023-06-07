@@ -5,7 +5,7 @@ const submissionSchema = new mongoose.Schema({
   chapter: { type: mongoose.Types.ObjectId, ref: "chapters" },
   status: {
     type: String,
-    enum: ["PENDING", "Not Submitted", "Submitted", "Graded"],
+    enum: ["PENDING", "Not Submitted", "Submitted", "Graded", "Re Submitted"],
     default: "Not Submitted",
   },
   grade: { type: Number },

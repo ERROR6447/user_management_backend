@@ -5,7 +5,7 @@ const { Chapters } = require("../models/chapters");
 
 const AddSubmission = async (req, res) => {
   try {
-    const { status } = req.body;
+    // const { status } = req.body;
 
     const val_result = await validateToken(req.headers.authorization);
 
@@ -13,6 +13,43 @@ const AddSubmission = async (req, res) => {
       res.status(401).json({
         message: "Access Denied ",
       });
+      return;
+    }
+
+    const alreadySubmitted = await Submissions.findOne({
+      student: val_result.user,
+      chapter: req.params.chapterId,
+    });
+
+    console.log("Submission: ", alreadySubmitted);
+
+    if (alreadySubmitted) {
+      const uSubmission = await Submissions.findOneAndUpdate(
+        {
+          student: val_result.user,
+          chapter: req.params.chapterId,
+        },
+        {
+          $set: {
+            status: "Re Submitted",
+          },
+        },
+        { new: true }
+      );
+
+      if (!uSubmission) {
+        console.log(
+          "Error While Updating ALready existing Submission: ",
+          uSubmission
+        );
+        res.status(500).json({
+          message: "Error While Updatind Already Existing Submission",
+        });
+        return;
+      }
+      res
+        .status(200)
+        .json({ message: "Submission Updated Successfully", uSubmission });
       return;
     }
 
@@ -31,9 +68,9 @@ const AddSubmission = async (req, res) => {
     }
 
     const submission = await Submissions.create({
-      student: req.params.user,
+      student: val_result.user,
       chapter: req.params.chapterId,
-      status,
+      // status,
     });
 
     if (!submission) {

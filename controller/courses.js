@@ -182,6 +182,7 @@ const AddStudentstoCourses = async (req, res) => {
   try {
     const { studentEmail, stack, courseList } = req.body;
 
+    console.log("Student Enrollment: ", req.body);
     const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
@@ -198,16 +199,16 @@ const AddStudentstoCourses = async (req, res) => {
       return;
     }
 
-    const student = await User.findOneAndUpdate(
-      { email: studentEmail },
-      {
-        $set: {
-          stack: stack,
-        },
-        $addToSet: { courses: { $each: courseList } },
-      },
-      { new: true }
-    );
+    // const student = await User.findOneAndUpdate(
+    //   { email: studentEmail },
+    //   {
+    //     $set: {
+    //       stack: stack,
+    //     },
+    //     $addToSet: { courses: { $each: courseList } },
+    //   },
+    //   { new: true }
+    // );
 
     if (!student) {
       res.status(500).json({ message: "Error While updating Student Stack" });

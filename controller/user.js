@@ -132,7 +132,7 @@ const signup = async (req, res) => {
     return;
   }
 
-  res.json({ message: "User Created Verify Email to Proceed" });
+  res.status(200).json({ message: "User Created Verify Email to Proceed" });
 };
 
 const validateToken = async (req, res) => {
@@ -199,7 +199,7 @@ const verifyEmail = async (req, res) => {
 
     console.log("Email Verified");
     res.redirect(
-      `${process.env.base_url}:${process.env.PORT}/email-verified?token=${accessToken}`
+      `${process.env.FRONT_PORT}/email-verified?token=${accessToken}`
     );
   } catch (err) {
     console.log("Error While Verifying email Addres", err);

@@ -124,6 +124,7 @@ const signup = async (req, res) => {
     verificationToken: verificationToken,
     is_verified: false,
     Enable_2FactAuth: Enable_2FactAuth,
+    courses: [],
   });
 
   if (!user) {
@@ -207,19 +208,28 @@ const verifyEmail = async (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ user_role: "student" }).select({
-    _id: 1,
-    //userId: 1,
-    username: 1,
-    email: 1,
-    user_role: 1,
-    stack: 1,
-  });
+  const users = await User.find({
+    user_role: "student",
+    $expr: { $gte: [{ $size: "$enrolled_courses" }, 1] },
+  }).populate("enrolled_courses");
+  // .select({
+  //   _id: 1,
+  //   //userId: 1,
+  //   username: 1,
+  //   email: 1,
+  //   user_role: 1,
+  //   stack: 1,
+  //   courses: 1,
+  // });
+
+  console.log("user.log: ", users.enrolled_courses);
 
   if (!users) {
     res.status(500).json({ message: "Error While Fetching Users" });
     return;
   }
+
+  console.log("SEnding: ", users);
 
   res.status(200).json({ users });
 };

@@ -16,27 +16,30 @@ const addChapters = async (req, res) => {
       return;
     }
 
-    const course = await Courses.find({ _id: req.params.courseId });
+    const course = await Courses.findOne({ _id: req.params.courseId });
 
     if (!course) {
       res.status(500).json({ message: "No Course Found" });
       return;
     }
 
-    const user = await User.find({ _id: val_result.user });
+    const user = await User.findOne({ _id: val_result.user });
 
     if (!user) {
       res.status(500).json({ message: "No user Found" });
       return;
     }
 
+    console.log("User: ", user);
+    console.log("Course: ", course);
+
     const chapter = await Chapters.create({
       title,
       description,
       practical,
-      image,
       course: course._id,
       createdBy: user._id,
+      image,
     });
 
     if (!chapter) {
@@ -70,7 +73,7 @@ const updateChapter = async (req, res) => {
 
     const uChapter = await Chapters.findOneAndUpdate(
       {
-        _id: req.params.chatperId,
+        _id: req.params.chapterId,
       },
       {
         $set: {

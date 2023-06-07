@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Courses } = require("./courses");
 
 const userSchema = new mongoose.Schema({
   username: String,
@@ -15,6 +16,7 @@ const userSchema = new mongoose.Schema({
   twoFactSecret: { type: String, default: null },
   otpauth_url: { type: String, default: null },
   stack: { type: String, default: null },
+  enrolled_courses: [{ type: mongoose.Types.ObjectId, ref: "courses" }],
 });
 
 const User = mongoose.model("users", userSchema);

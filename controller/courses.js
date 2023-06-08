@@ -212,6 +212,10 @@ const AddStudentstoCourses = async (req, res) => {
     //   { new: true }
     // );
 
+    const student = await User.findOne({
+      email: studentEmail,
+    });
+
     if (!student) {
       res.status(500).json({ message: "Error While updating Student Stack" });
       return;

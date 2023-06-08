@@ -2,6 +2,7 @@ const { validateToken } = require("../utils/validatetoken");
 const { Submissions } = require("../models/submission");
 const { User } = require("../models/user");
 const { Chapters } = require("../models/chapters");
+const { Courses } = require("../models/courses");
 
 const AddSubmission = async (req, res) => {
   try {
@@ -259,6 +260,58 @@ const getAllSubmission = async (req, res) => {
   }
 };
 
+const testgetSubmssision = async (req, res) => {
+  try {
+    const val_result = await validateToken(req.headers.authorization);
+
+    console.log("Result of val_result: ", val_result);
+    if (!val_result.valid || val_result !== "admin") {
+      res.status(401).json({
+        message: "Access Denied ",
+      });
+      return;
+    }
+
+    const userData = await Submissions.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "student",
+          foreignField: "_id",
+          as: "studentDetails",
+        },
+      },
+      {
+        $group: {
+          _id: "$student",
+          student: { $first: { $arrayElemAt: ["$studentDetails", 0] } },
+          submissions: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          studentId: "$student._id",
+          username: "$student.username",
+          submissions: 1,
+        },
+      },
+    ]);
+
+    if (!userData) {
+      console.log("error  While fetching submissions: ", userData);
+      res.status(500).json({ message: "Error while fetching submissions" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Submissions Fetched", allsubmission: userData });
+  } catch (err) {
+    console.log("Error  while Fetching submission: ", err);
+    res.status(500).json({ message: "Error While Fetching SUbmissions" });
+  }
+};
+
 module.exports = {
   AddSubmission,
   updateSubmission,
@@ -266,4 +319,5 @@ module.exports = {
   deleteSubmission,
   getSubmissionByStudentId,
   getAllSubmission,
+  testgetSubmssision,
 };

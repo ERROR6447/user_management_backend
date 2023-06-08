@@ -6,6 +6,7 @@ const {
   deleteSubmission,
   getSubmissionByStudentId,
   getAllSubmission,
+  testgetSubmssision,
 } = require("../controller/submission");
 
 const router = express.Router();
@@ -21,5 +22,7 @@ router.delete("/deleteSubmission/:submissionId", deleteSubmission);
 router.get("/getSubmission", getSubmissionByStudentId);
 
 router.get("/getAllSubmission", getAllSubmission);
+
+router.get("/getAllSubmission2", testgetSubmssision);
 
 module.exports = router;

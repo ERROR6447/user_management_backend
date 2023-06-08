@@ -7,6 +7,7 @@ const addChapters = async (req, res) => {
   try {
     const { title, description, practical, image } = req.body;
 
+    console.log("Images: ", image);
     const val_result = await validateToken(req.headers.authorization);
 
     if (!val_result.valid || val_result.role !== "admin") {
@@ -54,7 +55,7 @@ const addChapters = async (req, res) => {
       chapter,
     });
   } catch (err) {
-    console.log("Error While Creating Chatpers for Course");
+    console.log("Error While Creating Chatpers for Course", err);
     res.status(500).json({ message: "Error While Creating Chapters" });
   }
 };

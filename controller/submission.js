@@ -265,47 +265,50 @@ const testgetSubmssision = async (req, res) => {
     const val_result = await validateToken(req.headers.authorization);
 
     console.log("Result of val_result: ", val_result);
-    if (!val_result.valid || val_result !== "admin") {
+    if (!val_result.valid || val_result.role !== "admin") {
       res.status(401).json({
         message: "Access Denied ",
       });
       return;
     }
 
-    const userData = await Submissions.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "student",
-          foreignField: "_id",
-          as: "studentDetails",
-        },
-      },
-      {
-        $group: {
-          _id: "$student",
-          student: { $first: { $arrayElemAt: ["$studentDetails", 0] } },
-          submissions: { $push: "$$ROOT" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          studentId: "$student._id",
-          username: "$student.username",
-          submissions: 1,
-        },
-      },
-    ]);
+    let userData = await User.find({ user_role: "student" });
+
+    userData = await Promise.all(
+      userData.map(async (user) => {
+        const Allcourses = await Courses.find({ enrolled_students: user._id });
+        const courses_ids = Allcourses.map((course) => course._id);
+        const submittedPracticals = await Submissions.find({
+          student: user._id,
+        }).populate("chapter");
+        const totalTasks = await Chapters.countDocuments({
+          course: { $in: courses_ids },
+        });
+
+        return {
+          ...user,
+          courses: Allcourses,
+          tasksCompleted: submittedPracticals.length,
+          totalTasks: totalTasks,
+          submittedPracticals: submittedPracticals,
+        };
+      })
+    );
+
+    const stacks = await User.distinct("stack", {
+      $and: [{ stack: { $ne: null } }, { stack: { $exists: true, $ne: "" } }],
+    });
 
     if (!userData) {
       console.log("error  While fetching submissions: ", userData);
       res.status(500).json({ message: "Error while fetching submissions" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Submissions Fetched", allsubmission: userData });
+    res.status(200).json({
+      message: "Submissions Fetched",
+      allsubmission: userData,
+      stacks,
+    });
   } catch (err) {
     console.log("Error  while Fetching submission: ", err);
     res.status(500).json({ message: "Error While Fetching SUbmissions" });

@@ -212,9 +212,21 @@ const AddStudentstoCourses = async (req, res) => {
     //   { new: true }
     // );
 
-    const student = await User.findOne({
-      email: studentEmail,
-    });
+    // const student = await User.findOne({
+    //   email: studentEmail,
+    // });
+
+    const student = await User.findOneAndUpdate(
+      { email: studentEmail },
+      {
+        $set: {
+          stack: stack,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (!student) {
       res.status(500).json({ message: "Error While updating Student Stack" });
@@ -315,7 +327,14 @@ const getAllCourse = async (req, res) => {
       res.status(500).json({ message: "Error While Fetching All Courses" });
       return;
     }
-    res.status(200).json({ message: "All Courses", courses: AllCourses });
+
+    const studentCount = await User.countDocuments({ user_role: "student" });
+
+    res.status(200).json({
+      message: "All Courses",
+      courses: AllCourses,
+      totalStudents: studentCount,
+    });
   } catch (err) {
     console.log("Error While Fetching Course:\n", err);
     res
